@@ -1,0 +1,11 @@
+Options -Indexes
+
+<Files "config.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+</IfModule>
