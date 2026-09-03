@@ -164,4 +164,89 @@ $stats = getLicenseStats();
         }
         .alert-success { background: rgba(0,255,100,0.05); border: 1px solid rgba(0,255,100,0.1); color: #00ff64; }
         .alert-danger { background: rgba(255,0,0,0.05); border: 1px solid rgba(255,0,0,0.1); color: #ff4444; }
-        .key-code { color: #00d4ff; font-family: 'Courier New', monospace; font-size: 0.7rem
+        .key-code { color: #00d4ff; font-family: 'Courier New', monospace; font-size: 0.7rem; }
+        @media (max-width: 768px) { .row-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-crown"></i> ADMIN DASHBOARD</h1>
+            <div class="user-info">
+                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($_SESSION['admin_username']); ?></span>
+                <form method="POST" style="display:inline;">
+                    <button type="submit" name="logout" class="btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </form>
+            </div>
+        </div>
+
+        <?php if ($message): ?>
+            <div class="alert alert-success"><i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($message); ?></div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> <?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="number"><?php echo $stats['total'] ?? 0; ?></div>
+                <div class="label">Total Licenses</div>
+            </div>
+            <div class="stat-box">
+                <div class="number"><?php echo $stats['active'] ?? 0; ?></div>
+                <div class="label">Active</div>
+            </div>
+            <div class="stat-box">
+                <div class="number"><?php echo $stats['today'] ?? 0; ?></div>
+                <div class="label">Generated Today</div>
+            </div>
+        </div>
+
+        <div class="row-grid">
+            <div>
+                <div class="card">
+                    <h3><i class="fas fa-cog"></i> Settings</h3>
+                    <form method="POST">
+                        <input type="text" name="api_url" class="form-control" placeholder="API URL" value="<?php echo htmlspecialchars($settings['api_url'] ?? ''); ?>" required>
+                        <input type="text" name="default_game" class="form-control" placeholder="Default Game" value="<?php echo htmlspecialchars($settings['default_game'] ?? 'FFMax No Root'); ?>" required>
+                        <input type="number" name="default_duration" class="form-control" placeholder="Duration (Hours)" value="<?php echo htmlspecialchars($settings['default_duration'] ?? '5'); ?>" required>
+                        <input type="number" name="default_device_limit" class="form-control" placeholder="Device Limit" value="<?php echo htmlspecialchars($settings['default_device_limit'] ?? '1'); ?>" required>
+                        <input type="text" name="brand_name" class="form-control" placeholder="Brand Name" value="<?php echo htmlspecialchars($settings['brand_name'] ?? 'HEX CHEATS XOS'); ?>" required>
+                        <button type="submit" name="update_settings" class="btn-primary"><i class="fas fa-save"></i> Save Settings</button>
+                    </form>
+                </div>
+            </div>
+            <div>
+                <div class="card">
+                    <h3><i class="fas fa-key"></i> Licenses</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Game</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($licenses as $l): ?>
+                                    <tr>
+                                        <td class="key-code"><?php echo htmlspecialchars($l['license_key']); ?></td>
+                                        <td><?php echo htmlspecialchars($l['game']); ?></td>
+                                        <td><span class="badge badge-<?php echo $l['status']; ?>"><?php echo strtoupper($l['status']); ?></span></td>
+                                        <td style="font-size:0.6rem;color:rgba(255,255,255,0.3);"><?php echo substr($l['created_at'], 0, 10); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <?php if (empty($licenses)): ?>
+                                    <tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.2);padding:30px;">No licenses generated yet</td></tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
